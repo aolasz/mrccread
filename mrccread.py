@@ -1,19 +1,33 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding: utf-8
 
+import argparse
 from pathlib import Path
 import re
 
 import xlsxwriter
 
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "outfiles",
+    nargs='+',
+    type=argparse.FileType("rt"),
+    default=sys.stdin,
+    help="Path to one or more MRCC output files",
+)
+parser.add_argument(
+    "--xlsxfile",
+    nargs="?",
+    type=argparse.FileType("wb"),
+    default=sys.stdout,
+    help="Path to result xlsx file",
+)
+args = parser.parse_args()
+fpaths = [Path(outfile.name).resolve() for outfile in args.outfiles]
+
 header0 = ["Molecule", "Method", "Basis", "CPU time", "Memory",	"Disk load", "Energy",	"Determinants"]
 header1 = [None, None, None, "[s]", "[MiB]", "[MiB]", "[A.U.]", None]
 headers = (header0, header1)
-fdir = Path(".").resolve()
-fnames = (
-    "Li2_mcscf_mrccsd_fc.out",
-    "Li2_hf_ccsdtq_p_mrcc.out",
-)
 
 
 def keyword(kw):
@@ -64,7 +78,7 @@ def get_num_determinants(*, text):
     return int(search[-1])
 
 
-workbook = xlsxwriter.Workbook("qcread.xlsx")
+workbook = xlsxwriter.Workbook(args.xlsxfile)
 worksheet = workbook.add_worksheet()
 
 bold = workbook.add_format({'bold': True})
@@ -73,9 +87,8 @@ worksheet.set_column('B:B', 20)
 for header_num, header in enumerate(headers):
     worksheet.write_row(header_num, 0, header, bold)
 
-for fnum, fname in enumerate(fnames):
+for fnum, fpath in enumerate(fpaths):
     row_num = len(headers) + fnum
-    fpath = fdir / fname
     molecule = fpath.stem.split("_")[0]
 
     with open(fpath, "rt") as out_file:
