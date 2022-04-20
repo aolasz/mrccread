@@ -39,12 +39,10 @@ header1 = [None, None, None, "[s]", "[MiB]", "[MiB]", "[A.U.]", None]
 headers = (header0, header1)
 
 
-def keyword(kw):
-    return re.compile(rf"^\s?{kw}\s?=\s?([^#\n\r\s]+)", flags=re.IGNORECASE | re.MULTILINE)
-
-
 def find(*, kw, text):
-    search = re.search(rf"^\s?{kw}\s?=\s?([^#\n\r\s]+)", text, flags=re.IGNORECASE | re.MULTILINE)
+    search = re.search(
+        rf"^\s?{kw}\s?=\s?([^#\n\r\s]+)", text, flags=re.IGNORECASE | re.MULTILINE
+    )
     if not search:
         raise KeyError(kw)
     return search.group(1)
@@ -63,7 +61,9 @@ def get_energy(*, text):
 
 def get_num_determinants(*, text):
     search = re.findall(
-        r"^\s?Total number of determinants:\s+(\d+)", text, flags=re.IGNORECASE | re.MULTILINE
+        r"^\s?Total number of determinants:\s+(\d+)",
+        text,
+        flags=re.IGNORECASE | re.MULTILINE,
     )
     if len(search) < 1:
         raise KeyError(method)
