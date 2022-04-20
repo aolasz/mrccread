@@ -78,7 +78,7 @@ def get_energy(*, text: str) -> float:
         flags=re.IGNORECASE | re.MULTILINE,
     )
     if len(search) < 1:
-        raise KeyError(method)
+        raise KeyError("Total energy")
     return float(search[-1])
 
 
@@ -96,7 +96,7 @@ def get_num_determinants(*, text: str) -> int:
         flags=re.IGNORECASE | re.MULTILINE,
     )
     if len(search) < 1:
-        raise KeyError(method)
+        raise KeyError("Total number of determinants")
     return int(search[-1])
 
 
