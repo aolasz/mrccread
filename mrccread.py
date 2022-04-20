@@ -14,6 +14,7 @@ xlsxwriter package to be installed within the Python runtime environment
 import argparse
 from pathlib import Path
 import re
+import sys
 
 import xlsxwriter
 
